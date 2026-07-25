@@ -14,7 +14,7 @@ keywords = ["anime-expeditions", "roblox", "macro", "auto-farm"]
 [tool.ruff]
 line-length = 120
 target-version = "py310"
-exclude = [".github/scripts/", "bootstrap.py", "build_bootstrap.py"]
+exclude = [".github/scripts/", "bootstrap.py", "build_bootstrap.py", "build_pyinstaller.py"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "YTT", "BLE", "B", "A", "COM", "C4", "DTZ", "T10", "EM", "ISC", "ICN", "G", "INP", "PIE", "RET", "RUF", "S", "SLF", "SLOT", "SIM", "TID", "TCH", "ARG", "PGH"]
