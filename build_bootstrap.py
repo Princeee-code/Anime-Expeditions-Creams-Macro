@@ -10,7 +10,7 @@ Requires:
     py -3.12 -m pip install pyinstaller
     py -3.12 build_bootstrap.py
 
-Output: dist/Herm's Engine - Anime Expeditions Bootstrapper.exe
+Output: dist/Herms Engine - Anime Expeditions Bootstrapper.exe
 """
 import subprocess
 import sys

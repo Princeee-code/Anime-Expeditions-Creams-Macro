@@ -35,7 +35,7 @@ API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/releases/latest"
 # purpose -- GitHub rewrites spaces in asset filenames to dots, dashes
 # stay put). The bootstrapper is Windows-only, so always the -Windows zip.
 ZIP_ASSET_NAME = "Creams-Macro-Anime-Expeditions-Windows.zip"
-LOCAL_EXE = os.path.join(APP_DIR, "Herm's Engine - Anime Expeditions.exe")
+LOCAL_EXE = os.path.join(APP_DIR, "Herms Engine - Anime Expeditions.exe")
 LOCAL_ZIP = os.path.join(APP_DIR, ".bootstrap_download.zip")
 VERSION_FILE = os.path.join(APP_DIR, ".bootstrap_version")
 

@@ -43,7 +43,7 @@ jobs:
       - name: Package macOS zip (.app + editable Assets folder)
         run: |
           mkdir -p package
-          cp -R "dist/Herm's Engine - Anime Expeditions.app" package/
+          cp -R "dist/Herms Engine - Anime Expeditions.app" package/
           cp -R Assets package/Assets
           # No --keepParent: it wrapped everything in a "package/" folder, which both
           # made manual extraction awkward and silently broke the updater's Assets

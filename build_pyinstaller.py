@@ -18,7 +18,7 @@ Requires:
     py -3.12 -m pip install pyinstaller
     py -3.12 build_pyinstaller.py
 
-Output: dist/Herm's Engine - Anime Expeditions.exe
+Output: dist/Herms Engine - Anime Expeditions.exe
 """
 import subprocess
 import sys
@@ -27,9 +27,9 @@ import os
 ROOT = os.path.dirname(os.path.abspath(__file__))
 # No apostrophe -- PyInstaller writes --name straight into an
 # auto-generated .spec file as an unescaped Python string literal
-# ("Herm's Engine..." breaks that file's own syntax). Nuitka took the name
+# ("Herms Engine..." breaks that file's own syntax). Nuitka took the name
 # as a plain filename argument, so this never came up there.
-EXE_NAME = "Herm's Engine - Anime Expeditions"
+EXE_NAME = "Herms Engine - Anime Expeditions"
 
 # winforms.py imports win32 unconditionally even though edgechromium is the
 # backend actually used at runtime -- PyInstaller's own pywebview hook
@@ -137,7 +137,7 @@ def _windows_version_file():
       StringStruct('FileVersion', "{ver}"),
       StringStruct('InternalName', "{EXE_NAME}"),
       StringStruct('OriginalFilename', "{EXE_NAME}.exe"),
-      StringStruct('ProductName', "Herm's Engine - Anime Expeditions"),
+      StringStruct('ProductName', "Herms Engine - Anime Expeditions"),
       StringStruct('ProductVersion', "{ver}"),
       StringStruct('LegalCopyright', "Herm's Engine"),
     ])]),
