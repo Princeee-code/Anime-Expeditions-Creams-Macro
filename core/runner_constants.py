@@ -408,25 +408,7 @@ DEFAULT_STATS_REGION = {"x": 210, "y": 337, "width": 509, "height": 57}
 # the documented single source of each default; this dict is the runtime
 # override surface (merged with the user's saved values in _run, read via
 # self._coords/_cxy). All in the docked window's 1152x756 client space.
-DEFAULT_COORDS = {
-    "difficulty_normal_x": 311, "difficulty_normal_y": 315,
-    "difficulty_hard_x": 364, "difficulty_hard_y": 315,
-    "matchmaking_region_x": 277, "matchmaking_region_y": 543,
-    "matchmaking_region_w": 437, "matchmaking_region_h": 45,
-    "story_click_x": STORY_CLICK[0], "story_click_y": STORY_CLICK[1],
-    "stage_row_x": STAGE_CLICK_BASE[0], "stage_row_y": STAGE_CLICK_BASE[1],
-    "stage_row_height": STAGE_ROW_HEIGHT,
-    "act_row_x": ACT_CLICK_BASE[0], "act_row_y": ACT_CLICK_BASE[1],
-    "act_row_height": ACT_ROW_HEIGHT,
-    "challenge_stage_1_x": CHALLENGE_STAGE_CLICK["1"][0], "challenge_stage_1_y": CHALLENGE_STAGE_CLICK["1"][1],
-    "challenge_stage_2_x": CHALLENGE_STAGE_CLICK["2"][0], "challenge_stage_2_y": CHALLENGE_STAGE_CLICK["2"][1],
-    "challenge_stage_3_x": CHALLENGE_STAGE_CLICK["3"][0], "challenge_stage_3_y": CHALLENGE_STAGE_CLICK["3"][1],
-    "expedition_difficulty_x": EXPEDITION_DIFFICULTY_CLICK[0], "expedition_difficulty_y": EXPEDITION_DIFFICULTY_CLICK[1],
-    "team_loadout_x": TEAM_LOADOUT_CLICK_1[0], "team_loadout_y": TEAM_LOADOUT_CLICK_1[1],
-    "team_loadout_row_height": TEAM_LOADOUT_ROW_HEIGHT,
-    "screen_middle_x": SCREEN_MIDDLE_CLICK[0], "screen_middle_y": SCREEN_MIDDLE_CLICK[1],
-    "unit_info_reset_x": UNIT_INFO_RESET_CLICK[0], "unit_info_reset_y": UNIT_INFO_RESET_CLICK[1],
-}
+from core.coords import DEFAULT_COORDS
 
 # Victory/Defeat: no fixed timeout makes sense for "how long can a battle
 # run", so this is a generous safety net (30 min), not an expected duration --
