@@ -32,6 +32,11 @@ on:
     tags:
       - "v*.*.*"
   workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (defaults to github.ref_name when triggered by tag push)"
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -86,31 +91,35 @@ jobs:
           Copy-Item Assets package/Assets -Recurse
           Compress-Archive -Path package/* -DestinationPath "dist/Creams-Macro-Anime-Expeditions-Windows.zip"
 
+      - name: Upload build artifacts (save even if release fails)
+        uses: actions/upload-artifact@v4
+        with:
+          name: cream-macro-windows
+          path: |
+            dist/Creams-Macro-Anime-Expeditions-Windows.zip
+            dist/Creams Macro - Anime Expeditions.exe
+          if-no-files-found: error
+
       - name: Get changelog from the tag message
-        # A curated summary, not GitHub's raw commit-list changelog --
-        # written into the tag itself (`git tag -a vX.Y.Z -m "..."`) when
-        # cutting a release, read back out here via the API rather than
-        # local git commands -- `git tag -l --format='%(contents)'` came
-        # back empty in this exact job (actions/checkout's tag-object fetch
-        # is flaky depending on how the ref was resolved for a tag-push
-        # trigger), silently falling back to the commit message instead
-        # and shipping the wrong release body. The API has no such
-        # ambiguity: it reads the tag object GitHub itself has on record.
+        # When triggered by workflow_dispatch with a 'tag' input, use that.
+        # Otherwise use github.ref_name (the tag name on tag-push, or the
+        # branch name on manual dispatch without a tag).
         id: changelog
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ inputs.tag || github.ref_name }}
         run: |
-          REF_JSON=$(gh api "repos/${{ github.repository }}/git/refs/tags/${{ github.ref_name }}")
-          OBJ_SHA=$(echo "$REF_JSON" | jq -r '.object.sha')
-          OBJ_TYPE=$(echo "$REF_JSON" | jq -r '.object.type')
-          if [ "$OBJ_TYPE" = "tag" ]; then
-            BODY=$(gh api "repos/${{ github.repository }}/git/tags/$OBJ_SHA" --jq '.message')
+          if BODY=$(gh api "repos/${{ github.repository }}/git/refs/tags/$TAG_NAME" --jq '.object.sha' 2>/dev/null); then
+            OBJ_SHA="$BODY"
+            OBJ_TYPE=$(gh api "repos/${{ github.repository }}/git/tags/$OBJ_SHA" --jq '.object.type' 2>/dev/null || echo "commit")
+            if [ "$OBJ_TYPE" = "tag" ]; then
+              BODY=$(gh api "repos/${{ github.repository }}/git/tags/$OBJ_SHA" --jq '.message')
+            else
+              BODY=$(gh api "repos/${{ github.repository }}/commits/$OBJ_SHA" --jq '.commit.message')
+            fi
           else
-            # Lightweight tag (no -a/-m) -- object.type is "commit", not
-            # "tag", so there's no separate tag message to read; fall back
-            # to the commit it points at.
-            BODY=$(gh api "repos/${{ github.repository }}/commits/$OBJ_SHA" --jq '.commit.message')
+            BODY="Release $TAG_NAME — built via workflow_dispatch"
           fi
           echo "body<<CHANGELOG_EOF" >> "$GITHUB_OUTPUT"
           echo "$BODY" >> "$GITHUB_OUTPUT"
@@ -127,7 +136,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: ${{ github.ref_name }}
+          tag_name: ${{ inputs.tag || github.ref_name }}
+          name: ${{ inputs.tag || github.ref_name }}
           body: ${{ steps.changelog.outputs.body }}
           files: |
             dist/Creams-Macro-Anime-Expeditions-Windows.zip
