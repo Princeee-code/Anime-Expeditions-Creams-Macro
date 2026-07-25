@@ -4632,6 +4632,15 @@ window.addEventListener('pywebviewready', async () => {
     if (loadingVer) loadingVer.textContent = `v${version}`;
   } catch (e) {}
   try {
+    const ly = await pywebview.api.get_layout();
+    const root = document.documentElement;
+    root.style.setProperty('--game-w', ly.game_w + 'px');
+    root.style.setProperty('--game-h', ly.game_h + 'px');
+    root.style.setProperty('--panel-w', ly.panel_w + 'px');
+    if (ly.compact) root.dataset.compact = '1';
+    else delete root.dataset.compact;
+  } catch (e) {}
+  try {
     const info = await pywebview.api.get_time_info();
     sessionStart = info.session_start;
     allTimeBase = info.all_time_base;

@@ -76,25 +76,48 @@ IMAGE_MANAGER_CATEGORIES = {
 }
 
 GUI_TITLE = "Cream's Macro | Anime Expeditions"
-PANEL_WIDTH = 400
-TITLEBAR_H = 44  # custom HTML titlebar, since the window is frameless (no native OS titlebar)
-LOGS_H = 160  # log strip under the docked Roblox window, same width as the game
-GUI_WIDTH_FULL = config.FIXED_WIN_W + PANEL_WIDTH
-GUI_WIDTH_COMPACT = PANEL_WIDTH
-GUI_HEIGHT_FULL = TITLEBAR_H + config.FIXED_WIN_H + LOGS_H
-GUI_HEIGHT_COMPACT = TITLEBAR_H + 380  # tall enough for the waiting screen's full stack (emblem +
-# expanding ping rings + tag + title + status + Skip + version badge) -- 280 clipped the emblem's
-# animation and the bottom rows
 
-# F7 compact view: trim the window to EXACTLY the docked game plus the bottom
-# control strip, dropping the empty side-panel column and the log gap. Width
-# is the game's own width and height is titlebar + game + strip, so the game
-# is never clipped (only the empty margins are removed) or hidden -- it stays
-# visible and clickable, and docking is never touched. Strip height mirrors
-# #compact-strip's height in ui/style.css.
+# ── Dynamic layout ───────────────────────────────────────────────────────
+# All dimension constants below are recomputed at startup from the actual
+# screen size so the app fits on any resolution (1366×768, 1360×768,
+# 1920×1080, …).  The vision pipeline normalises every capture to the
+# 1152×756 reference space, so templates and hardcoded coordinates work
+# unchanged at any game-window size as long as the aspect ratio is
+# preserved (see core.config.compute_layout).
+TITLEBAR_H = 44
+LOGS_H = 160
 COMPACT_STRIP_H = 50
-GUI_WIDTH_COMPACT_FIT = config.FIXED_WIN_W
-GUI_HEIGHT_COMPACT_FIT = TITLEBAR_H + config.FIXED_WIN_H + COMPACT_STRIP_H
+PANEL_WIDTH = 400
+GUI_WIDTH_FULL = 1552
+GUI_HEIGHT_FULL = 960
+GUI_WIDTH_COMPACT = 400
+GUI_HEIGHT_COMPACT = 424
+GUI_WIDTH_COMPACT_FIT = 1152
+GUI_HEIGHT_COMPACT_FIT = 850
+LAYOUT = None  # dict set by _init_layout() → config.compute_layout()
+
+
+def _init_layout():
+    """Recompute GUI dimensions to fit the actual screen."""
+    global PANEL_WIDTH, GUI_WIDTH_FULL, GUI_HEIGHT_FULL
+    global GUI_WIDTH_COMPACT, GUI_HEIGHT_COMPACT
+    global GUI_WIDTH_COMPACT_FIT, GUI_HEIGHT_COMPACT_FIT, LAYOUT
+    from core import window as wm
+
+    screen_w, screen_h = wm.get_screen_size()
+    LAYOUT = config.compute_layout(screen_w, screen_h)
+
+    PANEL_WIDTH = LAYOUT["panel_w"]
+    GUI_WIDTH_FULL = LAYOUT["full_w"]
+    GUI_HEIGHT_FULL = LAYOUT["full_h"]
+
+    # Waiting / compact initial window
+    GUI_WIDTH_COMPACT = max(400, LAYOUT["panel_w"]) if not LAYOUT["compact"] else 400
+    GUI_HEIGHT_COMPACT = TITLEBAR_H + 380
+
+    # F7 compact-fit: trim GUI to just the game + bottom strip
+    GUI_WIDTH_COMPACT_FIT = LAYOUT["game_w"]
+    GUI_HEIGHT_COMPACT_FIT = TITLEBAR_H + LAYOUT["game_h"] + COMPACT_STRIP_H
 
 # ── macOS side-by-side geometry ─────────────────────────────────────────────
 # On Windows the game is a child window INSIDE ours, so one window size covers
@@ -280,7 +303,7 @@ def _mac_panel_layout() -> dict:
     the game simply overflows the right edge; the startup check in _launch_ui
     already warns about that case rather than silently arranging off-screen."""
     x, y, width, height = window_mac.get_visible_frame()
-    panel_w = max(MAC_PANEL_MIN_W, min(MAC_PANEL_MAX_W, width - config.FIXED_WIN_W - MAC_GAP))
+    panel_w = max(MAC_PANEL_MIN_W, min(MAC_PANEL_MAX_W, width - (LAYOUT or {}).get("game_w", config.FIXED_WIN_W) - MAC_GAP))
     return {
         "x": x, "y": y,
         "panel_w": panel_w, "panel_h": height,
@@ -418,6 +441,15 @@ class Api:
         # up front, same push_ui-then-poll-for-details pattern as the
         # update popup's get_update_info.
         return {"percent": wm.get_display_scale_percent()}
+
+    def get_layout(self) -> dict:
+        """Return the computed game/panel layout dict so the frontend can
+        size itself correctly at any screen resolution."""
+        return LAYOUT or {
+            "game_w": 1152, "game_h": 756, "panel_w": 400,
+            "full_w": 1552, "full_h": 960, "compact": False,
+            "titlebar_h": 44,
+        }
 
     def get_update_info(self) -> dict:
         # Populated by a background check kicked off a few seconds after
@@ -2616,17 +2648,20 @@ def _launch_ui():
     roblox_wm = WindowManager(config.ROBLOX_WINDOW_TITLE)  # only used for its resize/client-rect helpers below
 
     screen_w, screen_h = wm.get_screen_size()
+    _init_layout()  # recalc all GUI constants from actual screen size
+    l = LAYOUT  # shorthand
+
     if sys.platform == "darwin":
         # Side-by-side arrangement (see core/dock.py's darwin GameDocker) needs the panel width
         # plus the full fixed game size in logical points. Smaller/lower-scaled MacBook displays
         # (e.g. a 13" panel left at its default 1280x800 scaled resolution) don't have that much
         # logical width even though the physical panel is plenty big -- Roblox ends up parked
         # partly or fully off-screen with no error, which just looks like "the game is too big".
-        needed_w = GUI_WIDTH_COMPACT + 12 + config.FIXED_WIN_W
-        if screen_w < needed_w or screen_h < config.FIXED_WIN_H:
+        needed_w = PANEL_WIDTH + 12 + l["game_w"]
+        if screen_w < needed_w or screen_h < l["game_h"]:
             api.push_log(
                 f"[Macro] Your display's logical resolution ({screen_w}x{screen_h}pt) is smaller than "
-                f"what side-by-side docking needs ({needed_w}x{config.FIXED_WIN_H}pt) -- Roblox will be "
+                f"what side-by-side docking needs ({needed_w}x{l['game_h']}pt) -- Roblox will be "
                 f"placed partly or fully off-screen. Fix: System Settings > Displays > select a scaled "
                 f"resolution with \"More Space\" (a higher point resolution, not necessarily higher "
                 f"physical res) so it's at least that wide.")
@@ -2770,7 +2805,8 @@ def _launch_ui():
                         continue
 
                     roblox_wm.hwnd = hwnd
-                    roblox_wm.resize_client_to()
+                    lw = LAYOUT  # computed game-window client size
+                    roblox_wm.resize_client_to(lw["game_w"], lw["game_h"])
 
                     if sys.platform == "darwin":
                         # macOS can't embed another app's window (no
@@ -2846,7 +2882,8 @@ def _launch_ui():
                         # the cascade the whole close path exists to prevent.
                         if api.stopping.is_set():
                             return
-                        api.docker.dock(hwnd, gui_hwnd, x=0, y=TITLEBAR_H)
+                        api.docker.dock(hwnd, gui_hwnd, x=0, y=TITLEBAR_H,
+                                        width=lw["game_w"], height=lw["game_h"])
                         # Stay hidden until the JS side explicitly shows it for the Task
                         # screen (showDocked() does that) — Info/Settings/Macro Manager are the
                         # default/other screens now, and Roblox is a native window that
@@ -2876,7 +2913,8 @@ def _launch_ui():
                         and api._cutout_game_visible
                         and api.game_hwnd and wm.is_window(api.game_hwnd)
                         and api.gui_hwnd and wm.is_window(api.gui_hwnd)):
-                    api.docker.dock(api.game_hwnd, api.gui_hwnd, x=0, y=TITLEBAR_H)
+                    api.docker.dock(api.game_hwnd, api.gui_hwnd, x=0, y=TITLEBAR_H,
+                                    width=LAYOUT["game_w"], height=LAYOUT["game_h"])
             except Exception:
                 pass
 
