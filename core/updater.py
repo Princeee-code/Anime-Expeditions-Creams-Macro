@@ -43,7 +43,7 @@ import requests
 
 from . import constants
 
-GITHUB_REPO = "Cweamy/Anime-Expeditions-Creams-Macro"
+GITHUB_REPO = "Princeee-code/Anime-Expeditions-Creams-Macro"
 RELEASES_LATEST_URL = f"https://api.github.com/repos/{GITHUB_REPO}/releases/latest"
 RELEASES_PAGE_URL = f"https://github.com/{GITHUB_REPO}/releases/latest"
 # The packaged release zip (exe + the loose Assets/ folder side by side,
@@ -816,7 +816,7 @@ def stage_exe_update(new_exe_path: str) -> str:
 setlocal enabledelayedexpansion
 set LOG="{log_path}"
 echo ---- %date% %time% ---- > %LOG%
-echo Updating Cream's Macro -- please wait, this window closes itself...
+echo Updating Herm's Engine -- please wait, this window closes itself...
 echo [1/5] Stopping the running app (image: {exe_name})... >> %LOG%
 rem Force-kill as a safety net -- main.Api.apply_update already calls
 rem close_window() (which un-parents the docked Roblox window before

@@ -38,7 +38,7 @@ def main() -> int:
 
     payload = {
         "embeds": [{
-            "title": f"Cream's Macro {tag_name} is out",
+            "title": f"Herm's Engine {tag_name} is out",
             "description": body[:MAX_DESCRIPTION],
             "url": release_url,
             "color": 5793266,

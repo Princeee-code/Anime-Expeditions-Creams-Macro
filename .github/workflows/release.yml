@@ -1,4 +1,4 @@
-name: Build EXE
+name: Build Herm's Engine EXE
 
 on:
   push:
@@ -31,15 +31,15 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force package | Out-Null
-          Copy-Item "dist/Creams Macro - Anime Expeditions.exe" package/
+          Copy-Item "dist/Herm's Engine - Anime Expeditions.exe" package/
           Copy-Item Assets package/Assets -Recurse
-          Compress-Archive -Path package/* -DestinationPath "dist/Creams-Macro-Anime-Expeditions-Windows.zip"
+          Compress-Archive -Path package/* -DestinationPath "dist/Herms-Engine-Anime-Expeditions-Windows.zip"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: cream-macro-windows
+          name: herms-engine-windows
           path: |
-            dist/Creams-Macro-Anime-Expeditions-Windows.zip
-            dist/Creams Macro - Anime Expeditions.exe
+            dist/Herms-Engine-Anime-Expeditions-Windows.zip
+            dist/Herm's Engine - Anime Expeditions.exe
           if-no-files-found: error

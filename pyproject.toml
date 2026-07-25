@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=64.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "herms-engine"
+version = "1.0.0"
+description = "Vision-based auto-farm macro for Roblox Anime Expeditions — rebuilt by Hermes"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+keywords = ["anime-expeditions", "roblox", "macro", "auto-farm"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "YTT", "BLE", "B", "A", "COM", "C4", "DTZ", "T10", "EM", "ISC", "ICN", "G", "INP", "PIE", "PL", "PTH", "RET", "RUF", "S", "SLF", "SLOT", "SIM", "TID", "TCH", "ARG", "PGH", "PD", "PLW", "PLR"]
+ignore = ["E501", "E302", "E303", "W291", "W293", "N802", "N803", "N806", "D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107", "N999", "N801"]
+unfixable = ["ALL"]
+
+[tool.ruff.format]
+quote-style = "double"

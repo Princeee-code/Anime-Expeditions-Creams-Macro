@@ -1397,7 +1397,7 @@ class MacroRunner(ChallengeOps, ExpeditionOps, BlockOps):
             "title": "Victory!" if is_win else "Defeat",
             "color": 0x3FBF6F if is_win else 0xE05A6D,
             "fields": fields,
-            "footer": {"text": "Cream's Macro | Anime Expeditions"},
+            "footer": {"text": "Herm's Engine | Anime Expeditions"},
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
         mention_id = (webhook or {}).get("mention_id")
@@ -1790,7 +1790,7 @@ class MacroRunner(ChallengeOps, ExpeditionOps, BlockOps):
             "description": description,
             "color": color,
             "fields": fields,
-            "footer": {"text": "Cream's Macro | Anime Expeditions"},
+            "footer": {"text": "Herm's Engine | Anime Expeditions"},
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
         mention_id = (webhook or {}).get("mention_id")

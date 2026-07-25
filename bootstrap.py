@@ -1,5 +1,5 @@
 """
-Tiny bootstrapper for Cream's Macro | Anime Expeditions.
+Tiny bootstrapper for Herm's Engine | Anime Expeditions.
 
 Downloads the real app from GitHub Releases on first run (or when a newer
 version is out) and launches it. Built as its own separate, much smaller
@@ -28,14 +28,14 @@ import zipfile
 import requests
 
 APP_DIR = os.path.dirname(os.path.abspath(sys.argv[0]))
-GITHUB_REPO = "Cweamy/Anime-Expeditions-Creams-Macro"
+GITHUB_REPO = "Princeee-code/Anime-Expeditions-Creams-Macro"
 RELEASES_PAGE = f"https://github.com/{GITHUB_REPO}/releases/latest"
 API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/releases/latest"
 # Must match release.yml's packaged Windows zip name exactly (dashes on
 # purpose -- GitHub rewrites spaces in asset filenames to dots, dashes
 # stay put). The bootstrapper is Windows-only, so always the -Windows zip.
 ZIP_ASSET_NAME = "Creams-Macro-Anime-Expeditions-Windows.zip"
-LOCAL_EXE = os.path.join(APP_DIR, "Creams Macro - Anime Expeditions.exe")
+LOCAL_EXE = os.path.join(APP_DIR, "Herm's Engine - Anime Expeditions.exe")
 LOCAL_ZIP = os.path.join(APP_DIR, ".bootstrap_download.zip")
 VERSION_FILE = os.path.join(APP_DIR, ".bootstrap_version")
 
@@ -45,7 +45,7 @@ MB_ERROR = 0x10
 
 def _msg(text: str, icon: int = MB_OK):
     try:
-        ctypes.windll.user32.MessageBoxW(0, text, "Cream's Macro", icon)
+        ctypes.windll.user32.MessageBoxW(0, text, "Herm's Engine", icon)
     except Exception:
         pass
 
@@ -161,7 +161,7 @@ def ensure_app() -> bool:
 def main():
     if not ensure_app():
         _msg(
-            "Couldn't download Cream's Macro. Check your internet connection "
+            "Couldn't download Herm's Engine. Check your internet connection "
             "and try again.",
             MB_ERROR,
         )
