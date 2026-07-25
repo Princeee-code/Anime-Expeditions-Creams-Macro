@@ -18,7 +18,7 @@ target-version = "py310"
 [tool.ruff.lint]
 # Minimal set: only catch real bugs, not style preferences.
 select = ["E", "W"]
-ignore = ["E501", "E741"]
+ignore = ["E501", "E741", "E731"]
 unfixable = ["ALL"]
 
 [tool.ruff.format]
