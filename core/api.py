@@ -10,14 +10,12 @@ import re
 import sys
 import time
 import json
-import subprocess
 import threading
 from datetime import date
 
 from core import window as wm
 from core import config
 from core import constants
-from core import keys
 from core import settings as cfg
 from core import templates as tpl
 from core import webhook
