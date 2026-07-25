@@ -408,7 +408,7 @@ DEFAULT_STATS_REGION = {"x": 210, "y": 337, "width": 509, "height": 57}
 # the documented single source of each default; this dict is the runtime
 # override surface (merged with the user's saved values in _run, read via
 # self._coords/_cxy). All in the docked window's 1152x756 client space.
-from core.coords import DEFAULT_COORDS
+from core.coords import DEFAULT_COORDS  # noqa: E402
 
 # Victory/Defeat: no fixed timeout makes sense for "how long can a battle
 # run", so this is a generous safety net (30 min), not an expected duration --
