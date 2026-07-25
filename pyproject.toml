@@ -23,3 +23,9 @@ unfixable = ["ALL"]
 
 [tool.ruff.format]
 quote-style = "double"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning"]
+addopts = "-p no:cacheprovider --ignore=tests/test_window_win.py"
+junit_family = "xunit2"
